@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 09:20:52 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/20 11:45:14 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/05/20 12:10:12 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ bool	create_threads(t_ph *ph)
 	int	i;
 
 	ph->th = malloc((ph->ph_num + 1) * sizeof(pthread_t));
-	ph->mtx = malloc((ph->ph_num + 1) * sizeof(pthread_mutex_t));
+	ph->fork_mtx = malloc((ph->ph_num + 1) * sizeof(pthread_mutex_t));
 	if (!ph->th)
 		return (write(2, "malloc_error\n", 13), 0);
 	i = 0;
@@ -29,11 +29,15 @@ bool	create_threads(t_ph *ph)
 			free(ph->th);
 			return (0);
 		}
-		if (pthread_mutex_init(&ph->mtx[i], NULL))
+		if (pthread_mutex_init(&ph->fork_mtx[i], NULL))
 		{
 			write(2, "error in 	mutex creation\n", 25);
-			free(ph->mtx);
+			free(ph->fork_mtx);
 			return (0);
+		}
+		else
+		{
+			printf("mutex created\n");
 		}
 		i++;
 	}

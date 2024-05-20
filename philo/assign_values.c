@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 18:24:37 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/20 09:06:02 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/05/20 14:41:17 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,14 @@ int	str_to_int(const char *str, int *error)
 
 bool	assign_values(int argc, char **argv, t_ph *ph)
 {
-	int	error;
+	int				error;
+	struct timeval	start;
 
+	gettimeofday(&start, NULL);
 	error = 0;
 	if (argc < 5 || argc > 6)
 		return (write(2, "program takes only 4 or 5 integer values\n", 41), 0);
+	ph->start_ms = getmillitime(start);
 	ph->ph_num = str_to_int(argv[1], &error);
 	ph->ttd = str_to_int(argv[2], &error);
 	ph->tte = str_to_int(argv[3], &error);
@@ -75,6 +78,6 @@ bool	assign_values(int argc, char **argv, t_ph *ph)
 	else
 		ph->eat_num = -1;
 	if (error || ph->ph_num <= 0 || ph->ttd < 0 || ph->tte < 0 || ph->tts < 0)
-		return (write(2, "arguments should be positive integers\n", 38), 0);		
+		return (write(2, "arguments should be positive integers\n", 38), 0);
 	return (1);
 }

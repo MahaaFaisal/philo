@@ -1,28 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/14 08:42:06 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/20 14:47:14 by mafaisal         ###   ########.fr       */
+/*   Created: 2024/05/20 13:50:09 by mafaisal          #+#    #+#             */
+/*   Updated: 2024/05/20 14:48:12 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	main(int argc, char **argv)
+long	s_to_ms(long second)
 {
-	t_ph	ph;
-
-	memset(&ph, 0, sizeof(ph));
-	if (!assign_values(argc, argv, &ph))
-		return (1);
-	if (!create_threads(&ph))
-		return (1);
-	if (!join_threads(&ph))
-		return (1);
-	print_philo(&ph);
+	return (second * 1000);
 }
 
+long	us_to_ms(long microsecond)
+{
+	return (microsecond / 1000);
+}
+
+long	getmillitime(struct timeval time)
+{
+	return (s_to_ms(time.tv_sec) + us_to_ms(time.tv_usec));
+}
+
+int	getelapsedtime(long start_ms)
+{
+	int				elapsed_time;
+	long			now_ms;
+	struct timeval	now;
+
+	gettimeofday(&now, NULL);
+	now_ms = getmillitime(now);
+	elapsed_time = now_ms - start_ms;
+	return (elapsed_time);
+}

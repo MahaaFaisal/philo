@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 11:36:39 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/20 11:48:12 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/05/20 12:18:59 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool	join_threads(t_ph *ph)
 {
-	int	i;
+	int		i;
 	bool	state;
 
 	state = 1;
@@ -23,7 +23,12 @@ bool	join_threads(t_ph *ph)
 	{
 		if (pthread_join(ph->th[i], NULL))
 		{
-			write(2, "error in 	thread join\n", 25);
+			write(2, "error in 	thread join\n", 22);
+			state = 0;
+		}
+		if (pthread_mutex_destroy(&ph->fork_mtx[i]))
+		{
+			write(2, "error in 	mutex destroy\n", 24);
 			state = 0;
 		}
 		i++;
