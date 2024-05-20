@@ -1,22 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   debug.c                                            :+:      :+:    :+:   */
+/*   join_threads.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/17 13:27:21 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/20 08:56:49 by mafaisal         ###   ########.fr       */
+/*   Created: 2024/05/20 11:36:39 by mafaisal          #+#    #+#             */
+/*   Updated: 2024/05/20 11:48:12 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	print_philo(t_ph *ph)
+bool	join_threads(t_ph *ph)
 {
-	printf("number of philosophers: %d\n", ph->ph_num);
-	printf("time to die: %d\n", ph->ttd);
-	printf("time to eat: %d\n", ph->tte);
-	printf("time to sleep: %d\n", ph->tts);
-	printf("number of meals: %d\n", ph->eat_num);
+	int	i;
+	bool	state;
+
+	state = 1;
+	i = 0;
+	while (i < ph->ph_num)
+	{
+		if (pthread_join(ph->th[i], NULL))
+		{
+			write(2, "error in 	thread join\n", 25);
+			state = 0;
+		}
+		i++;
+	}
+	return (state);
 }
