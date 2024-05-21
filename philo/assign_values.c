@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 18:24:37 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/20 14:41:17 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/05/21 12:42:25 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	str_to_int(const char *str, int *error)
 	return (result * sign);
 }
 
-bool	assign_values(int argc, char **argv, t_ph *ph)
+bool	assign_values(int argc, char **argv, t_shared *shared)
 {
 	int				error;
 	struct timeval	start;
@@ -68,16 +68,16 @@ bool	assign_values(int argc, char **argv, t_ph *ph)
 	error = 0;
 	if (argc < 5 || argc > 6)
 		return (write(2, "program takes only 4 or 5 integer values\n", 41), 0);
-	ph->start_ms = getmillitime(start);
-	ph->ph_num = str_to_int(argv[1], &error);
-	ph->ttd = str_to_int(argv[2], &error);
-	ph->tte = str_to_int(argv[3], &error);
-	ph->tts = str_to_int(argv[4], &error);
+	shared->start_ms = getmillitime(start);
+	shared->ph_num = str_to_int(argv[1], &error);
+	shared->ttd = str_to_int(argv[2], &error);
+	shared->tte = str_to_int(argv[3], &error);
+	shared->tts = str_to_int(argv[4], &error);
 	if (argc == 6)
-		ph->eat_num = str_to_int(argv[5], &error);
+		shared->eat_num = str_to_int(argv[5], &error);
 	else
-		ph->eat_num = -1;
-	if (error || ph->ph_num <= 0 || ph->ttd < 0 || ph->tte < 0 || ph->tts < 0)
+		shared->eat_num = -1;
+	if (error || shared->ph_num <= 0 || shared->ttd < 0 || shared->tte < 0 || shared->tts < 0)
 		return (write(2, "arguments should be positive integers\n", 38), 0);
 	return (1);
 }

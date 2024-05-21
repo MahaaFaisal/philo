@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 08:42:06 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/20 14:47:14 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/05/21 12:41:48 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 int	main(int argc, char **argv)
 {
-	t_ph	ph;
+	t_shared	shared;
 
-	memset(&ph, 0, sizeof(ph));
-	if (!assign_values(argc, argv, &ph))
+	memset(&shared, 0, sizeof(shared));
+	if (!assign_values(argc, argv, &shared))
 		return (1);
-	if (!create_threads(&ph))
+	if (!create_threads(&shared))
 		return (1);
-	if (!join_threads(&ph))
+	if (!join_threads(&shared))
 		return (1);
-	print_philo(&ph);
+	print_philo(&shared);
 }
 

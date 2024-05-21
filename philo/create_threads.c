@@ -6,33 +6,33 @@
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 09:20:52 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/20 12:10:12 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/05/21 12:43:38 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-bool	create_threads(t_ph *ph)
+bool	create_threads(t_shared *shared)
 {
 	int	i;
 
-	ph->th = malloc((ph->ph_num + 1) * sizeof(pthread_t));
-	ph->fork_mtx = malloc((ph->ph_num + 1) * sizeof(pthread_mutex_t));
-	if (!ph->th)
+	shared->th = malloc((shared->ph_num + 1) * sizeof(pthread_t));
+	shared->fork_mtx = malloc((shared->ph_num + 1) * sizeof(pthread_mutex_t));
+	if (!shared->th)
 		return (write(2, "malloc_error\n", 13), 0);
 	i = 0;
-	while (i < ph->ph_num)
+	while (i < shared->ph_num)
 	{
-		if (pthread_create(&ph->th[i], NULL, &eat_think_sleep, ph))
+		if (pthread_create(&shared->th[i], NULL, &eat_think_sleep, shared))
 		{
 			write(2, "error in thread creation\n", 25);
-			free(ph->th);
+			free(shared->th);
 			return (0);
 		}
-		if (pthread_mutex_init(&ph->fork_mtx[i], NULL))
+		if (pthread_mutex_init(&shared->fork_mtx[i], NULL))
 		{
 			write(2, "error in 	mutex creation\n", 25);
-			free(ph->fork_mtx);
+			free(shared->fork_mtx);
 			return (0);
 		}
 		else
@@ -41,7 +41,7 @@ bool	create_threads(t_ph *ph)
 		}
 		i++;
 	}
-	//? ph->th[ph->ph_num] = NULL;
-	//? ph->mtx[ph->ph_num] = NULL;
+	//? shared->th[shared->ph_num] = NULL;
+	//? shared->mtx[shared->ph_num] = NULL;
 	return (1);
 }
