@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:27:21 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/21 12:46:18 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/05/21 14:20:17 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	print_philo(t_shared *shared)
 {
 	printf("\n------ PHILO INFO -------\n");
-	usleep(4000);
+	// usleep(4000);
 	printf("elapsed time since start : %d\n", getelapsedtime(shared->start_ms));
 	usleep(4000);
 	printf("elapsed time since start : %d\n", getelapsedtime(shared->start_ms));
@@ -24,4 +24,14 @@ void	print_philo(t_shared *shared)
 	printf("time to eat: %d\n", shared->tte);
 	printf("time to sleep: %d\n", shared->tts);
 	printf("number of meals: %d\n", shared->eat_num);
+
+	int	i;
+
+	i = 0;
+	while (i < shared->ph_num)
+	{
+		printf("philosopher number %i id: %d\nlast_meal: %ld\ndead? %p\n",
+			i, shared->ph[i].id, shared->ph[i].last_meal, shared->ph[i].dead);
+		i++;
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 08:42:25 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/21 12:45:35 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/05/21 16:30:22 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,31 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
-#include <string.h>
-#include <sys/time.h>
+# include <string.h>
+# include <sys/time.h>
+
+typedef struct s_shared	t_shared;
+typedef struct s_ph
+{
+	pthread_t		th;
+	int				id;
+	long			last_meal;
+	int				*dead;
+	t_shared		*shared;
+}	t_ph;
 
 typedef struct s_shared
 {
-	pthread_t		*th;
+	t_ph			*ph;
 	pthread_mutex_t	*fork_mtx;
+	int				*forks;
 	int				ph_num;
 	int				ttd;
 	int				tte;
 	int				tts;
 	int				eat_num;
 	long			start_ms;
+	int				*dead;
 }	t_shared;
 
 // --------- initialize threads ---------------
