@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 08:42:25 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/21 16:30:22 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/05/22 11:05:09 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,18 @@
 # include <string.h>
 # include <sys/time.h>
 
+# define NRM "\x1B[0m"
+# define RED "\x1B[31m"
+# define GRN "\x1B[32m"
+# define YEL "\x1B[33m"
+# define BLU "\x1B[34m"
+
 typedef struct s_shared	t_shared;
 typedef struct s_ph
 {
 	pthread_t		th;
 	int				id;
 	long			last_meal;
-	int				*dead;
 	t_shared		*shared;
 }	t_ph;
 
@@ -42,7 +47,7 @@ typedef struct s_shared
 	int				tts;
 	int				eat_num;
 	long			start_ms;
-	int				*dead;
+	int				dead;
 }	t_shared;
 
 // --------- initialize threads ---------------
@@ -60,5 +65,5 @@ void	*eat_think_sleep(void *shared);
 bool	join_threads(t_shared *shared);
 
 // ------------- debuggers --------------------
-void	print_philo(t_shared *shared);
+// void	print_philo(t_shared *shared);
 #endif

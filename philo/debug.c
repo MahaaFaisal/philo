@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 13:27:21 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/21 14:20:17 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/05/22 10:56:51 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	print_philo(t_shared *shared)
 	while (i < shared->ph_num)
 	{
 		printf("philosopher number %i id: %d\nlast_meal: %ld\ndead? %p\n",
-			i, shared->ph[i].id, shared->ph[i].last_meal, shared->ph[i].dead);
+			i, shared->ph[i].id, shared->ph[i].last_meal, shared->ph[i]->shared->dead);
 		i++;
 	}
 }
