@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
+/*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 09:28:44 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/22 11:00:29 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/20 16:45:27 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,28 @@
 
 void	print_action(t_ph *ph, char *action, char *color)
 {
-	printf("%s%d %d %s\n%s", color, getelapsedtime(ph->shared->start_ms),
-		ph->id, action, NRM);
+	// pthread_mutex_lock(ph->shared->print_mtx);
+	printf("%s", color);
+	printf("%d ", getelapsedtime(ph->shared->start_ms));
+	printf("%d ", ph->id);
+	printf("%s\n",action);
+	printf("%s", NRM);
+	// pthread_mutex_unlock(ph->shared->print_mtx);
 }
 
 void	eat(t_ph *ph)
 {
-	if (ph->id % 2 == 0)
-	{
-		pthread_mutex_lock(&ph->shared->fork_mtx[ph->id]);
-		print_action(ph, "has taken a fork", NRM);
-		if (ph->id == 0)
-			pthread_mutex_lock(&ph->shared->fork_mtx[ph->shared->ph_num - 1]);
-		else
-			pthread_mutex_lock(&ph->shared->fork_mtx[ph->id - 1]);
-		print_action(ph, "has taken a fork", NRM);
-	}
-	else
-	{
-		pthread_mutex_lock(&ph->shared->fork_mtx[ph->id]);
-		print_action(ph, "has taken a fork ", NRM);
-		pthread_mutex_lock(&ph->shared->fork_mtx[ph->id - 1]);
-		print_action(ph, "has taken a fork", NRM);
-	}
+	pthread_mutex_lock(ph->first_mutex);
+	//check the id for the last fork 
+	print_action(ph, "has taken a fork", NRM);
+	pthread_mutex_lock(ph->sec_mutex);
+	//check the id for the last fork
+	print_action(ph, "has taken a fork ", NRM);
+	//update the last meal time
 	print_action(ph, "is eating", YEL);
 	usleep(ph->shared->tte * 1000);
-	pthread_mutex_unlock(&ph->shared->fork_mtx[ph->id]);
-	if (ph->id == 0)
-		pthread_mutex_unlock(&ph->shared->fork_mtx[ph->shared->ph_num - 1]);
-	else
-		pthread_mutex_unlock(&ph->shared->fork_mtx[ph->id - 1]);
+	pthread_mutex_unlock(ph->sec_mutex);
+	pthread_mutex_unlock(ph->first_mutex);
 }
 
 void	thinking(t_ph *ph)
@@ -55,7 +47,6 @@ void	sleeping(t_ph *ph)
 {
 	print_action(ph, "is sleeping", BLU);
 	usleep(ph->shared->tts * 1000);
-	thinking(ph);
 }
 
 void	*eat_think_sleep(void *philo)
@@ -69,6 +60,7 @@ void	*eat_think_sleep(void *philo)
 	{
 		eat(ph);
 		sleeping(ph);
+		thinking(ph);
 	}
 	return (0);
 }

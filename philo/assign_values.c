@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   assign_values.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
+/*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 18:24:37 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/21 12:42:25 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/20 17:42:51 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,25 +59,55 @@ int	str_to_int(const char *str, int *error)
 	return (result * sign);
 }
 
-bool	assign_values(int argc, char **argv, t_shared *shared)
+bool	assign_data(int argc, char **argv, t_data *data)
 {
 	int				error;
+	error = 0;
+
+	if (argc < 5 || argc > 6)
+		return (write(2, "program takes only 4 or 5 integer values\n", 41), 0);
+	data->ph_num = str_to_int(argv[1], &error);
+	if (error || data->ph_num <= 0)
+		return (write(2, "arguments should be positive integers\n", 38), 0);
+	data->ph = malloc((data->ph_num) * sizeof(t_ph)); //+1
+	if (!data->ph)
+		return (write(2, "malloc_error\n", 13), 0);
+	return (1);
+}
+
+// what if we pass shared itself rather than data
+bool	assign_shared(int argc, char **argv, t_data *data)
+{
+	int				error;
+	int				i;
 	struct timeval	start;
 
 	gettimeofday(&start, NULL);
-	error = 0;
-	if (argc < 5 || argc > 6)
-		return (write(2, "program takes only 4 or 5 integer values\n", 41), 0);
-	shared->start_ms = getmillitime(start);
-	shared->ph_num = str_to_int(argv[1], &error);
-	shared->ttd = str_to_int(argv[2], &error);
-	shared->tte = str_to_int(argv[3], &error);
-	shared->tts = str_to_int(argv[4], &error);
+	data->shared = malloc(sizeof(t_shared));
+	data->shared->start_ms = getmillitime(start);
+	data->shared->ttd = str_to_int(argv[2], &error);
+	data->shared->tte = str_to_int(argv[3], &error);
+	data->shared->tts = str_to_int(argv[4], &error);
 	if (argc == 6)
-		shared->eat_num = str_to_int(argv[5], &error);
+		data->shared->meals_num = str_to_int(argv[5], &error);
 	else
-		shared->eat_num = -1;
-	if (error || shared->ph_num <= 0 || shared->ttd < 0 || shared->tte < 0 || shared->tts < 0)
+		data->shared->meals_num = -1;
+	if (error || data->shared->ttd < 0
+		|| data->shared->tte < 0 || data->shared->tts < 0
+		|| (argc == 6 && data->shared->meals_num < 0))
 		return (write(2, "arguments should be positive integers\n", 38), 0);
+	data->shared->fork_mtx = malloc((data->ph_num + 1) * sizeof(pthread_mutex_t));
+	if (!data->shared->fork_mtx)
+		return (free(data->ph), write(2, "malloc_error\n", 13), 0);
+	i = 0;
+	while (i < data->ph_num)
+	{
+		if (pthread_mutex_init(&data->shared->fork_mtx[i++], NULL))
+		{
+			write(2, "error in 	mutex creation\n", 25);
+			free(data->shared->fork_mtx);
+			return (0);
+		}
+	}
 	return (1);
 }

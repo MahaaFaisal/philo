@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
+/*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 08:42:25 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/22 11:05:09 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/20 16:48:54 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,43 +27,55 @@
 # define YEL "\x1B[33m"
 # define BLU "\x1B[34m"
 
-typedef struct s_shared	t_shared;
+typedef struct s_shared
+{
+	pthread_mutex_t	*fork_mtx;
+	int				*forks;
+	int				ttd;
+	int				tte;
+	int				tts;
+	int				dead;
+	long			start_ms;
+	int				meals_num;
+}	t_shared;
+
 typedef struct s_ph
 {
 	pthread_t		th;
 	int				id;
+	int				meals_num;
 	long			last_meal;
+	pthread_mutex_t	*first_mutex;
+	int				*first_fork;
+	pthread_mutex_t	*sec_mutex;
+	int				*sec_fork;
 	t_shared		*shared;
 }	t_ph;
 
-typedef struct s_shared
+typedef struct s_data // should be named data
 {
-	t_ph			*ph;
-	pthread_mutex_t	*fork_mtx;
-	int				*forks;
 	int				ph_num;
-	int				ttd;
-	int				tte;
-	int				tts;
-	int				eat_num;
-	long			start_ms;
-	int				dead;
-}	t_shared;
+	t_ph			*ph;
+	t_shared		*shared;
+}	t_data;
 
 // --------- initialize threads ---------------
-bool	assign_values(int argc, char **argv, t_shared *shared);
+bool	assign_data(int argc, char **argv, t_data *data);
+bool	assign_shared(int argc, char **argv, t_data *data);
 int		str_to_int(const char *str, int *error);
-bool	create_threads(t_shared *ph);
+bool	create_philos(t_data *ph);
 
 // ---------- time functions ----------------
 long	getmillitime(struct timeval time);
 int		getelapsedtime(long start_ms);
+
 // ---------- routine function ----------------
-void	*eat_think_sleep(void *shared);
+void	*eat_think_sleep(void *data);
 
 // ---------- terminate_threads ---------------
-bool	join_threads(t_shared *shared);
+bool	join_threads(t_data *data);
 
 // ------------- debuggers --------------------
-// void	print_philo(t_shared *shared);
+// void	print_philo(t_data *data);
+
 #endif

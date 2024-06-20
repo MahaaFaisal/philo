@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mafaisal <mafaisal@student.42abudhabi.a    +#+  +:+       +#+        */
+/*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 08:42:06 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/05/22 10:57:07 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/20 17:40:40 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,18 @@
 
 int	main(int argc, char **argv)
 {
-	t_shared	shared;
+	t_data	data;
 
-	memset(&shared, 0, sizeof(shared));
-	if (!assign_values(argc, argv, &shared))
+	memset(&data, 0, sizeof(data));
+	if (!assign_data(argc, argv, &data))
 		return (1);
-	if (!create_threads(&shared))
+	if (!assign_shared(argc, argv, &data))
 		return (1);
-	if (!join_threads(&shared))
+	if (!create_philos(&data))
 		return (1);
+	printf("threads created\n");
+	//monitoring threads here
+	if (!join_threads(&data))
+		return (1);
+	printf("threads joined\n");
 }
-
