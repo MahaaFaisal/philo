@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 18:24:37 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/20 17:42:51 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/21 13:19:48 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,29 +62,24 @@ int	str_to_int(const char *str, int *error)
 bool	assign_data(int argc, char **argv, t_data *data)
 {
 	int				error;
-	error = 0;
 
+	error = 0;
 	if (argc < 5 || argc > 6)
 		return (write(2, "program takes only 4 or 5 integer values\n", 41), 0);
 	data->ph_num = str_to_int(argv[1], &error);
 	if (error || data->ph_num <= 0)
 		return (write(2, "arguments should be positive integers\n", 38), 0);
-	data->ph = malloc((data->ph_num) * sizeof(t_ph)); //+1
+	data->ph = malloc((data->ph_num) * sizeof(t_ph));
 	if (!data->ph)
 		return (write(2, "malloc_error\n", 13), 0);
 	return (1);
 }
 
-// what if we pass shared itself rather than data
-bool	assign_shared(int argc, char **argv, t_data *data)
+bool	assign_args(int argc, char **argv, t_data *data)
 {
 	int				error;
-	int				i;
-	struct timeval	start;
 
-	gettimeofday(&start, NULL);
-	data->shared = malloc(sizeof(t_shared));
-	data->shared->start_ms = getmillitime(start);
+	error = 0;
 	data->shared->ttd = str_to_int(argv[2], &error);
 	data->shared->tte = str_to_int(argv[3], &error);
 	data->shared->tts = str_to_int(argv[4], &error);
@@ -96,9 +91,23 @@ bool	assign_shared(int argc, char **argv, t_data *data)
 		|| data->shared->tte < 0 || data->shared->tts < 0
 		|| (argc == 6 && data->shared->meals_num < 0))
 		return (write(2, "arguments should be positive integers\n", 38), 0);
-	data->shared->fork_mtx = malloc((data->ph_num + 1) * sizeof(pthread_mutex_t));
+	return (1);
+}
+
+// what if we pass shared itself rather than data
+bool	assign_shared(int argc, char **argv, t_data *data)
+{
+	int				i;
+
+	data->shared = malloc(sizeof(t_shared));
+	if (!assign_args(argc, argv, data))
+		return (0);
+	data->shared->fork_mtx = malloc((data->ph_num)
+			* sizeof(pthread_mutex_t));
 	if (!data->shared->fork_mtx)
 		return (free(data->ph), write(2, "malloc_error\n", 13), 0);
+	pthread_mutex_init(&data->shared->print_mtx, NULL);
+	pthread_mutex_init(&data->shared->dead_mtx, NULL);
 	i = 0;
 	while (i < data->ph_num)
 	{

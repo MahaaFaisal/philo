@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 08:42:25 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/20 16:48:54 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/21 13:59:49 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,9 @@ typedef struct s_shared
 	int				ttd;
 	int				tte;
 	int				tts;
+	pthread_mutex_t	dead_mtx;
 	int				dead;
+	pthread_mutex_t	print_mtx;
 	long			start_ms;
 	int				meals_num;
 }	t_shared;
@@ -50,6 +52,7 @@ typedef struct s_ph
 	pthread_mutex_t	*sec_mutex;
 	int				*sec_fork;
 	t_shared		*shared;
+	int				dead;
 }	t_ph;
 
 typedef struct s_data // should be named data
@@ -68,9 +71,15 @@ bool	create_philos(t_data *ph);
 // ---------- time functions ----------------
 long	getmillitime(struct timeval time);
 int		getelapsedtime(long start_ms);
+long	getmillinow(void);
+
+// --------------- monitors -------------------
+bool	should_die(t_ph *ph);
+bool	should_stop(t_shared *shared);
 
 // ---------- routine function ----------------
 void	*eat_think_sleep(void *data);
+void	print_action(t_ph *ph, char *action, char *color);
 
 // ---------- terminate_threads ---------------
 bool	join_threads(t_data *data);

@@ -1,29 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   monitors.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/14 08:42:06 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/21 14:13:28 by mafaisal         ###   ########.fr       */
+/*   Created: 2024/06/21 13:23:44 by mafaisal          #+#    #+#             */
+/*   Updated: 2024/06/21 17:58:09 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	main(int argc, char **argv)
-{
-	t_data	data;
 
-	memset(&data, 0, sizeof(data));
-	if (!assign_data(argc, argv, &data))
+bool	should_die(t_ph *ph)
+{
+	if (getelapsedtime(ph->last_meal) > ph->shared->ttd)
+	{
+		ph->dead = 1;
 		return (1);
-	if (!assign_shared(argc, argv, &data))
+	}
+	return (0);
+}
+
+bool	should_stop(t_shared *shared)
+{
+	pthread_mutex_lock(&shared->dead_mtx);
+	if (shared->dead == 0)
+	{
+		pthread_mutex_unlock(&shared->dead_mtx);
+		return (0);
+	}
+	else
+	{
+		pthread_mutex_unlock(&shared->dead_mtx);
 		return (1);
-	if (!create_philos(&data))
-		return (1);
-	//monitoring threads here
-	if (!join_threads(&data))
-		return (1);
+	}
 }

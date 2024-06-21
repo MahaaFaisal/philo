@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 09:20:52 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/20 16:50:09 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/21 12:55:27 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ void	assign_forks(t_data *data, int id)
 		data->ph[id].first_fork = &(data->shared->forks[id]);
 		if (id == 0)
 		{
-			data->ph[id].sec_mutex = &(data->shared->fork_mtx[data->ph_num - 1]);
+			data->ph[id].sec_mutex
+				= &(data->shared->fork_mtx[data->ph_num - 1]);
 			data->ph[id].sec_fork = &(data->shared->forks[data->ph_num - 1]);
 		}
 		else
@@ -40,17 +41,21 @@ void	assign_forks(t_data *data, int id)
 
 bool	create_philos(t_data *data)
 {
-	int	i;
+	int				i;
+	struct timeval	start;
 
 	i = 0;
+	gettimeofday(&start, NULL);
+	data->shared->start_ms = getmillitime(start);
 	while (i < data->ph_num)
 	{
 		data->ph[i].id = i;
 		data->ph[i].shared = data->shared;
 		data->ph[i].meals_num = data->shared->meals_num;
 		data->ph[i].last_meal = data->shared->start_ms;
-		assign_forks(data, data->ph[i].id); // ! not completed!
-		if (pthread_create(&data->ph[i].th, NULL, &eat_think_sleep, &data->ph[i]))
+		assign_forks(data, data->ph[i].id);
+		if (pthread_create(&data->ph[i].th, NULL,
+				&eat_think_sleep, &data->ph[i]))
 		{
 			write(2, "error in thread creation\n", 25);
 			free(data->ph);

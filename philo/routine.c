@@ -6,49 +6,57 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 09:28:44 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/20 16:45:27 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/21 17:58:19 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+int	ft_usleep(long milliseconds, t_ph *ph)
+{
+	long	start;
+
+	start = getmillinow();
+	while ((getmillinow() - start) < milliseconds
+		&& !should_die(ph) && !should_stop(ph->shared))
+		usleep(500);
+	return (0);
+}
+
 void	print_action(t_ph *ph, char *action, char *color)
 {
-	// pthread_mutex_lock(ph->shared->print_mtx);
+	pthread_mutex_lock(&ph->shared->print_mtx);
 	printf("%s", color);
 	printf("%d ", getelapsedtime(ph->shared->start_ms));
 	printf("%d ", ph->id);
 	printf("%s\n",action);
 	printf("%s", NRM);
-	// pthread_mutex_unlock(ph->shared->print_mtx);
+	pthread_mutex_unlock(&ph->shared->print_mtx);
 }
 
 void	eat(t_ph *ph)
 {
 	pthread_mutex_lock(ph->first_mutex);
-	//check the id for the last fork 
+	//check the id for the last fork
 	print_action(ph, "has taken a fork", NRM);
 	pthread_mutex_lock(ph->sec_mutex);
 	//check the id for the last fork
+	ph->last_meal = getmillinow();
 	print_action(ph, "has taken a fork ", NRM);
-	//update the last meal time
 	print_action(ph, "is eating", YEL);
-	usleep(ph->shared->tte * 1000);
+	ph->meals_num--;
+	ft_usleep(ph->shared->tte, ph);
 	pthread_mutex_unlock(ph->sec_mutex);
 	pthread_mutex_unlock(ph->first_mutex);
-}
-
-void	thinking(t_ph *ph)
-{
-	print_action(ph, "is thinking", GRN);
 }
 
 void	sleeping(t_ph *ph)
 {
 	print_action(ph, "is sleeping", BLU);
-	usleep(ph->shared->tts * 1000);
+	ft_usleep(ph->shared->tts, ph);
 }
 
+//should the simulation stops immediatel when it eats the meals?
 void	*eat_think_sleep(void *philo)
 {
 	t_ph	*ph;
@@ -56,11 +64,26 @@ void	*eat_think_sleep(void *philo)
 	ph = philo;
 	if (ph->id % 2 == 0)
 		usleep(50);
-	while (!(ph->shared->dead))
+	while (!should_die(ph) && !should_stop(ph->shared))
 	{
 		eat(ph);
+		if (ph->meals_num == 0 ||
+			(should_die(ph) || should_stop(ph->shared)))
+			break ;
 		sleeping(ph);
-		thinking(ph);
+		if (should_die(ph) || should_stop(ph->shared))
+			break ;
+		print_action(ph, "is thinking", GRN);
+		if (should_die(ph) || should_stop(ph->shared))
+			break ;
 	}
+	if (ph->dead && !should_stop(ph->shared))
+	{
+		pthread_mutex_lock(&ph->shared->dead_mtx);
+		ph->shared->dead = 1;
+		pthread_mutex_unlock(&ph->shared->dead_mtx);
+		print_action(ph, "is dead", RED);
+	}
+	// pthread_detach(ph->th);
 	return (0);
 }
