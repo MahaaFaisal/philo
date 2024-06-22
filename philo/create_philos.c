@@ -49,6 +49,7 @@ bool	create_philos(t_data *data)
 	data->shared->start_ms = getmillitime(start);
 	while (i < data->ph_num)
 	{
+		data->ph[i].dead = 0;
 		data->ph[i].id = i;
 		data->ph[i].shared = data->shared;
 		data->ph[i].meals_num = data->shared->meals_num;

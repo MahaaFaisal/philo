@@ -87,6 +87,7 @@ bool	assign_args(int argc, char **argv, t_data *data)
 		data->shared->meals_num = str_to_int(argv[5], &error);
 	else
 		data->shared->meals_num = -1;
+	data->shared->dead = 0;
 	if (error || data->shared->ttd < 0
 		|| data->shared->tte < 0 || data->shared->tts < 0
 		|| (argc == 6 && data->shared->meals_num < 0))

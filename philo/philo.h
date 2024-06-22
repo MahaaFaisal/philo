@@ -82,8 +82,7 @@ void	*eat_think_sleep(void *data);
 void	print_action(t_ph *ph, char *action, char *color);
 
 // ---------- terminate_threads ---------------
-bool	join_threads(t_data *data);
-
+bool	end_program(t_data *data);
 // ------------- debuggers --------------------
 // void	print_philo(t_data *data);
 

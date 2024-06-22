@@ -24,6 +24,6 @@ int	main(int argc, char **argv)
 	if (!create_philos(&data))
 		return (1);
 	//monitoring threads here
-	if (!join_threads(&data))
+	if (!end_program(&data))
 		return (1);
 }
