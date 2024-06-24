@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   join_threads.c                                     :+:      :+:    :+:   */
+/*   end_program.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 11:36:39 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/20 16:51:34 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/24 15:47:03 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ bool	destroy_mutexes(t_data *data)
 void	free_memory(t_data *data)
 {
 	free(data->shared->fork_mtx);
+	free(data->shared->forks);
 	free(data->ph);
 	free(data->shared);
 }
@@ -72,9 +73,9 @@ bool	end_program(t_data *data)
 	int	state;
 
 	state = 1;
-	if (join_threads(data))
+	if (!join_threads(data))
 		state = 0;
-	if (destroy_mutexes(data))
+	if (!destroy_mutexes(data))
 		state = 0;
 	free_memory(data);
 	return (state);

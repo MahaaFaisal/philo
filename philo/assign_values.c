@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 18:24:37 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/21 13:19:48 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/24 16:29:21 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	str_to_int(const char *str, int *error)
 
 bool	assign_data(int argc, char **argv, t_data *data)
 {
-	int				error;
+	int	error;
 
 	error = 0;
 	if (argc < 5 || argc > 6)
@@ -110,8 +110,10 @@ bool	assign_shared(int argc, char **argv, t_data *data)
 	pthread_mutex_init(&data->shared->print_mtx, NULL);
 	pthread_mutex_init(&data->shared->dead_mtx, NULL);
 	i = 0;
+	data->shared->forks = malloc((data->ph_num) * sizeof(int));
 	while (i < data->ph_num)
 	{
+		data->shared->forks[i] = -1;
 		if (pthread_mutex_init(&data->shared->fork_mtx[i++], NULL))
 		{
 			write(2, "error in 	mutex creation\n", 25);

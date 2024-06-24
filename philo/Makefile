@@ -7,7 +7,7 @@ NAME = philo
 all: $(NAME)
 
 $(NAME): $(SRC)
-	$(CC) $(CFLAGS) $(THFLAG) $(SRC) -o $(NAME) #-fsanitize=address
+	$(CC) $(CFLAGS) $(THFLAG) $(SRC) -o $(NAME) 
 
 clean:
 	rm -rf $(NAME)
