@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 08:42:25 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/24 17:20:06 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/25 10:37:25 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ typedef struct s_shared
 	int				tte;
 	int				tts;
 	pthread_mutex_t	dead_mtx;
-	int				dead;
+	int				stop;
 	pthread_mutex_t	print_mtx;
 	long			start_ms;
 	int				meals_num;

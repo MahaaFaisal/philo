@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 09:28:44 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/24 16:39:23 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/25 10:47:25 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,23 +17,28 @@ int	ft_usleep(long milliseconds, t_ph *ph)
 	long	start;
 
 	start = getmillinow();
-	while ((getmillinow() - start) < milliseconds
-		&& !should_die(ph) && !should_stop(ph->shared))
+	while ((getmillinow() - start) < milliseconds)
+	{
+		if (should_die(ph) || should_stop(ph->shared))
+			return (0);
 		usleep(500);
-	return (0);
+	}
+	return (1);
 }
 
 void	print_action(t_ph *ph, char *action, char *color)
 {
 	pthread_mutex_lock(&ph->shared->print_mtx);
+	if (should_stop(ph->shared) && !ph->dead)
+	{
+		pthread_mutex_unlock(&ph->shared->print_mtx);
+		return ;
+	}
 	printf("%s", color);
 	printf("%d ", getelapsedtime(ph->shared->start_ms));
 	printf("%d ", ph->id + 1);
-	// printf("(%d) ", getelapsedtime(ph->last_meal));
-	printf("%s\n",action);
+	printf("%s\n", action);
 	printf("%s", NRM);
-	if (ph->dead)
-		usleep(500);
 	pthread_mutex_unlock(&ph->shared->print_mtx);
 }
 
@@ -66,14 +71,6 @@ void	eat(t_ph *ph)
 	pthread_mutex_unlock(ph->first_mutex);
 }
 
-void	sleeping(t_ph *ph)
-{
-	if (should_die(ph) || should_stop(ph->shared))
-		return ;
-	print_action(ph, "is sleeping", BLU);
-	ft_usleep(ph->shared->tts, ph);
-}
-
 void	*eat_think_sleep(void *philo)
 {
 	t_ph	*ph;
@@ -87,12 +84,12 @@ void	*eat_think_sleep(void *philo)
 		if (ph->meals_num == 0
 			|| (should_die(ph) || should_stop(ph->shared)))
 			break ;
-		sleeping(ph);
+		print_action(ph, "is sleeping", BLU);
+		if (!ft_usleep(ph->shared->tts, ph))
+			break ;
 		if (should_die(ph) || should_stop(ph->shared))
 			break ;
 		print_action(ph, "is thinking", GRN);
-		// if (should_die(ph) || should_stop(ph->shared))
-		// 	break ;
 	}
 	return (0);
 }

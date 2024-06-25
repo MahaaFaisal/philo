@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 18:24:37 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/24 16:29:21 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/24 18:48:45 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ bool	assign_args(int argc, char **argv, t_data *data)
 		data->shared->meals_num = str_to_int(argv[5], &error);
 	else
 		data->shared->meals_num = -1;
-	data->shared->dead = 0;
+	data->shared->stop = 0;
 	if (error || data->shared->ttd < 0
 		|| data->shared->tte < 0 || data->shared->tts < 0
 		|| (argc == 6 && data->shared->meals_num < 0))
