@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 09:28:44 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/25 10:47:25 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/26 13:30:23 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,23 +42,21 @@ void	print_action(t_ph *ph, char *action, char *color)
 	pthread_mutex_unlock(&ph->shared->print_mtx);
 }
 
-void	eat(t_ph *ph)
+bool	eat(t_ph *ph)
 {
 	if (should_die(ph) || should_stop(ph->shared))
-		return ;
+		return (0);
 	pthread_mutex_lock(ph->first_mutex);
-	if (should_die(ph) || should_stop(ph->shared) || *(ph->first_fork) == ph->id || ph->first_mutex == ph->sec_mutex)
-	{
-		pthread_mutex_unlock(ph->first_mutex);
-		return ;
-	}
+	if (should_die(ph) || should_stop(ph->shared)
+		|| *(ph->first_fork) == ph->id || ph->first_mutex == ph->sec_mutex)
+		return (pthread_mutex_unlock(ph->first_mutex), 0);
 	print_action(ph, "has taken a fork", NRM);
 	pthread_mutex_lock(ph->sec_mutex);
 	if (should_die(ph) || should_stop(ph->shared) || *(ph->sec_fork) == ph->id)
 	{
 		pthread_mutex_unlock(ph->sec_mutex);
 		pthread_mutex_unlock(ph->first_mutex);
-		return ;
+		return (0);
 	}
 	print_action(ph, "has taken a fork ", NRM);
 	print_action(ph, "is eating", YEL);
@@ -69,6 +67,7 @@ void	eat(t_ph *ph)
 	pthread_mutex_unlock(ph->sec_mutex);
 	*(ph->first_fork) = ph->id;
 	pthread_mutex_unlock(ph->first_mutex);
+	return (1);
 }
 
 void	*eat_think_sleep(void *philo)

@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 18:24:37 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/26 12:44:16 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/26 13:30:42 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ bool	assign_data(int argc, char **argv, t_data *data)
 	int	error;
 
 	error = 0;
-	data->ph = 	NULL;
+	data->ph = NULL;
 	if (argc < 5 || argc > 6)
 		return (write(2, "program takes only 4 or 5 integer values\n", 41), 0);
 	data->ph_num = str_to_int(argv[1], &error);
@@ -93,7 +93,6 @@ bool	assign_data(int argc, char **argv, t_data *data)
 		return (free(data->shared), 0);
 	return (1);
 }
-
 
 bool	assign_shared(t_data *data)
 {
