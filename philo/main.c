@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 08:42:06 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/26 11:50:49 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/26 12:44:00 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,11 @@ int	main(int argc, char **argv)
 		free(data.ph);
 		return (1);
 	}
-	if (!assign_shared(argc, argv, &data))
+	if (!assign_shared(&data))
 	{
+		free(data.ph);
+		free(data.shared);
 		destroy_mutexes(&data);
-		free_memory(&data);
 		return (1);
 	}
 	if (!create_philos(&data))

@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 18:24:37 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/26 12:08:28 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/26 12:44:16 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,23 +52,6 @@ int	str_to_int(const char *str, int *error)
 	return (result * sign);
 }
 
-bool	assign_data(int argc, char **argv, t_data *data)
-{
-	int	error;
-
-	error = 0;
-	data->ph = 	NULL;
-	if (argc < 5 || argc > 6)
-		return (write(2, "program takes only 4 or 5 integer values\n", 41), 0);
-	data->ph_num = str_to_int(argv[1], &error);
-	if (error || data->ph_num <= 0)
-		return (write(2, "arguments should be positive integers\n", 38), 0);
-	data->ph = malloc((data->ph_num) * sizeof(t_ph));
-	if (!data->ph)
-		return (write(2, "malloc_error\n", 13), 0);
-	return (1);
-}
-
 bool	assign_args(int argc, char **argv, t_data *data)
 {
 	int				error;
@@ -89,29 +72,50 @@ bool	assign_args(int argc, char **argv, t_data *data)
 	return (1);
 }
 
-bool	assign_shared(int argc, char **argv, t_data *data)
+bool	assign_data(int argc, char **argv, t_data *data)
 {
-	int				i;
+	int	error;
 
-	data->shared = NULL;
+	error = 0;
+	data->ph = 	NULL;
+	if (argc < 5 || argc > 6)
+		return (write(2, "program takes only 4 or 5 integer values\n", 41), 0);
+	data->ph_num = str_to_int(argv[1], &error);
+	if (error || data->ph_num <= 0)
+		return (write(2, "arguments should be positive integers\n", 38), 0);
+	data->ph = malloc((data->ph_num) * sizeof(t_ph));
+	if (!data->ph)
+		return (write(2, "malloc_error\n", 13), 0);
 	data->shared = malloc(sizeof(t_shared));
-	if (!assign_args(argc, argv, data))
+	if (!data->shared)
 		return (0);
+	if (!assign_args(argc, argv, data))
+		return (free(data->shared), 0);
+	return (1);
+}
+
+
+bool	assign_shared(t_data *data)
+{
+	int	i;
+
+	pthread_mutex_init(&data->shared->print_mtx, NULL);
+	pthread_mutex_init(&data->shared->dead_mtx, NULL);
 	data->shared->fork_mtx = malloc((data->ph_num)
 			* sizeof(pthread_mutex_t));
 	if (!data->shared->fork_mtx)
-		return (free(data->ph), write(2, "malloc_error\n", 13), 0);
-	pthread_mutex_init(&data->shared->print_mtx, NULL);
-	pthread_mutex_init(&data->shared->dead_mtx, NULL);
+		return (write(2, "malloc\n", 13), 0);
 	i = 0;
 	data->shared->forks = malloc((data->ph_num) * sizeof(int));
-	while (i < data->ph_num)
+	if (!data->shared->forks)
+		return (free(data->shared->fork_mtx), write(2, "malloc\n", 13), 0);
+	while (data->shared->forks && i < data->ph_num)
 	{
 		data->shared->forks[i] = -1;
 		if (pthread_mutex_init(&data->shared->fork_mtx[i++], NULL))
 		{
 			write(2, "error in 	mutex creation\n", 25);
-			(free(data->ph), free(data->shared->fork_mtx));
+			(free(data->shared->fork_mtx), free(data->shared->forks));
 			return (0);
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 08:42:25 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/25 10:37:25 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/26 12:44:07 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ typedef struct s_data // should be named data
 
 // --------- initialize threads ---------------
 bool	assign_data(int argc, char **argv, t_data *data);
-bool	assign_shared(int argc, char **argv, t_data *data);
+bool	assign_shared(t_data *data);
 int		str_to_int(const char *str, int *error);
 bool	create_philos(t_data *ph);
 
