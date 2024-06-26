@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 13:23:44 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/25 10:45:15 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/26 17:16:44 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ bool	should_die(t_ph *ph)
 {
 	if (should_stop(ph->shared))
 		return (1);
-	if (getelapsedtime(ph->last_meal) > ph->shared->ttd)
+	if (getelapsedtime(ph->last_meal) >= ph->shared->ttd)
 	{
 		ph->dead = 1;
 		pthread_mutex_lock(&ph->shared->dead_mtx);

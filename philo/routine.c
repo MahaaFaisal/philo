@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 09:28:44 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/26 13:30:23 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/26 17:15:36 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,11 @@ void	print_action(t_ph *ph, char *action, char *color)
 
 bool	eat(t_ph *ph)
 {
-	if (should_die(ph) || should_stop(ph->shared))
-		return (0);
 	pthread_mutex_lock(ph->first_mutex);
-	if (should_die(ph) || should_stop(ph->shared)
-		|| *(ph->first_fork) == ph->id || ph->first_mutex == ph->sec_mutex)
-		return (pthread_mutex_unlock(ph->first_mutex), 0);
 	print_action(ph, "has taken a fork", NRM);
+	if (should_die(ph) || should_stop(ph->shared)
+		|| ph->first_mutex == ph->sec_mutex)
+		return (pthread_mutex_unlock(ph->first_mutex), 0);
 	pthread_mutex_lock(ph->sec_mutex);
 	if (should_die(ph) || should_stop(ph->shared) || *(ph->sec_fork) == ph->id)
 	{
@@ -80,6 +78,8 @@ void	*eat_think_sleep(void *philo)
 	while (!should_die(ph) && !should_stop(ph->shared))
 	{
 		eat(ph);
+		if (ph->first_mutex == ph->sec_mutex)
+			ft_usleep(ph->shared->ttd + 1, ph);
 		if (ph->meals_num == 0
 			|| (should_die(ph) || should_stop(ph->shared)))
 			break ;
