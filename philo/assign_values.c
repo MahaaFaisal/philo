@@ -6,18 +6,11 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 18:24:37 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/24 18:48:45 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/26 12:08:28 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-int	is_space(char c)
-{
-	if (c == 32 || (c >= 9 && c <= 13))
-		return (1);
-	return (0);
-}
 
 static int	islong(long num, char c, int sign)
 {
@@ -38,7 +31,7 @@ int	str_to_int(const char *str, int *error)
 
 	i = 0;
 	sign = 1;
-	while (is_space(str[i]) == 1)
+	while (str[i] == 32 || (str[i] >= 9 && str[i] <= 13))
 		i++;
 	if (str[i] == '-' || str[i] == '+')
 	{
@@ -64,6 +57,7 @@ bool	assign_data(int argc, char **argv, t_data *data)
 	int	error;
 
 	error = 0;
+	data->ph = 	NULL;
 	if (argc < 5 || argc > 6)
 		return (write(2, "program takes only 4 or 5 integer values\n", 41), 0);
 	data->ph_num = str_to_int(argv[1], &error);
@@ -95,11 +89,11 @@ bool	assign_args(int argc, char **argv, t_data *data)
 	return (1);
 }
 
-// what if we pass shared itself rather than data
 bool	assign_shared(int argc, char **argv, t_data *data)
 {
 	int				i;
 
+	data->shared = NULL;
 	data->shared = malloc(sizeof(t_shared));
 	if (!assign_args(argc, argv, data))
 		return (0);
@@ -117,7 +111,7 @@ bool	assign_shared(int argc, char **argv, t_data *data)
 		if (pthread_mutex_init(&data->shared->fork_mtx[i++], NULL))
 		{
 			write(2, "error in 	mutex creation\n", 25);
-			free(data->shared->fork_mtx);
+			(free(data->ph), free(data->shared->fork_mtx));
 			return (0);
 		}
 	}

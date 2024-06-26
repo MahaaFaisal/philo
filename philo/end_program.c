@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 11:36:39 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/25 10:28:00 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/26 12:05:04 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ bool	destroy_mutexes(t_data *data)
 
 	state = 1;
 	i = 0;
-	while (i < data->ph_num)
+	while (data->shared->fork_mtx && i < data->ph_num)
 	{
 		if (pthread_mutex_destroy(&data->shared->fork_mtx[i]))
 		{
@@ -47,16 +47,8 @@ bool	destroy_mutexes(t_data *data)
 		}
 		i++;
 	}
-	if (pthread_mutex_destroy(&data->shared->print_mtx))
-	{
-		write(2, "error in 	print mutex destroy\n", 29);
-		state = 0;
-	}
-	if (pthread_mutex_destroy(&data->shared->dead_mtx))
-	{
-		write(2, "error in dead mutex destroy\n", 28);
-		state = 0;
-	}
+	pthread_mutex_destroy(&data->shared->print_mtx);
+	pthread_mutex_destroy(&data->shared->dead_mtx);
 	return (state);
 }
 

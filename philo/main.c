@@ -6,7 +6,7 @@
 /*   By: mafaisal <mafaisal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 08:42:06 by mafaisal          #+#    #+#             */
-/*   Updated: 2024/06/24 17:14:49 by mafaisal         ###   ########.fr       */
+/*   Updated: 2024/06/26 11:50:49 by mafaisal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	main(int argc, char **argv)
 	memset(&data, 0, sizeof(data));
 	if (!assign_data(argc, argv, &data))
 	{
-		free_memory(&data);
+		free(data.ph);
 		return (1);
 	}
 	if (!assign_shared(argc, argv, &data))
