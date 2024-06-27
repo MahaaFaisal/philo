@@ -21,7 +21,7 @@ int	ft_usleep(long milliseconds, t_ph *ph)
 	{
 		if (should_die(ph) || should_stop(ph->shared))
 			return (0);
-		usleep(500);
+		usleep(50);
 	}
 	return (1);
 }
